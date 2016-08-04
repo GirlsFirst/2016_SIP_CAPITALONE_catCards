@@ -42,87 +42,73 @@ done = False
 clock = pygame.time.Clock()
 
 
-possible_ball_colors = [BLACK, WHITE, GREEN, RED, BLUE, GREY]
 
-
-
-# x_speed = random.randint(-10, 10)
-# y_speed = random.randint(-10, 10)
-
-# x_location = int(100)
-# y_location = int(400)
-
-
-# ball_size = random.randint(10, 30)
-image_list = ["WIZ.png", "WIZ2.png"]
+wiz_list = ["WIZ.png", "WIZ2.png"]
+foe_list=["foe.png","foe2.png"]
 class character():
-    def __init__(self,image,width,height,X,Y):
-        #super()._init_()
-        #self.image=pygame.surface([width,height])
-        self.image=pygame.image.load (image)
-        self.rect=self.image.get_rect()
-        self.width=width
-        self.height=height
-        self.x=X
-        self.y=Y
-    def draw(self):
-        # self.draw.rect(screen, BLACK, [self.x,self.y, self.width, self.height], 2)
-        screen.blit(self.image,self.rect)
-        
-cat= character(image_list[1],120,140,70,100)
-#foe= character("wiz2.0.png",120,140,600,100)
+	def __init__(self,image):
+		#super()._init_()
+		#self.image=pygame.surface([width,height])
+		self.image=pygame.image.load (image)
+		self.rect=self.image.get_rect()
+		# self.width=width
+		# self.height=height
+		# self.rect.x=X
+		# self.rect.y=Y
+	def draw(self, image,X,Y):
+		self.image=pygame.image.load (image)
+		self.rect=self.image.get_rect()
+		self.rect.x=X
+		self.rect.y=Y
+		# self.draw.rect(screen, BLACK, [self.x,self.y, self.width, self.height], 2)
+		screen.blit(self.image,self.rect)
+
+cat= character(wiz_list[0])
+foe= character(foe_list[0])
 count =1
+
 # -------- Main Program Loop -----------
 while not done:
-    # --- Main event loop
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
+	# --- Main event loop
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			done = True
 
 
-    # --- Game logic should go here
+	# --- Game logic should go here
 
-    # --- Screen-clearing code goes here
+	# --- Screen-clearing code goes here
 
-    # Here, we clear the screen to white. Don't put other drawing commands
-    # above this, or they will be erased with this command.
+	# Here, we clear the screen to white. Don't put other drawing commands
+	# above this, or they will be erased with this command.
 
-    # If you want a background image, replace this clear with blit'ing the
-    # background image.
-    screen.fill(WHITE)
-    if count == 1:
-        cat.image = image_list[1]
-        count =2
-    elif count == 2:
-        cat.image = image_list[0]
-        count = 1
-    # --- Drawing code should go here
+	# If you want a background image, replace this clear with blit'ing the
+	# background image.
+	screen.fill(WHITE)
+	#
+	if count < 30:
+		cat.image = wiz_list[1]
+		foe.image= foe_list[1]
+		count +=1
+	elif count < 60:
+		cat.image = wiz_list[0]
+		foe.image= foe_list[0]
+		count += 1
+	if count == 59:
+		count = 1
 
-    pygame.draw.line(screen,BLACK,[0,SCREEN_HEIGHT/2],[900,SCREEN_HEIGHT/2],1)
-    # ball_color = BLUE # This is outside because of variable scoping.
+	# --- Drawing code should go here
 
+	pygame.draw.line(screen,BLACK,[0,SCREEN_HEIGHT/2],[900,SCREEN_HEIGHT/2],1)
 
-    # pygame.draw.circle(screen, ball_color, [x_location, y_location], ball_size)
+	cat.draw(cat.image,-50,60)
+	foe.draw(foe.image,500,50)
 
+	# --- Go ahead and update the screen with what we've drawn.
+	pygame.display.flip()
 
-    # if x_location >= SCREEN_WIDTH - ball_size or x_location < ball_size:
-        # x_speed = x_speed * -1
-
-    # if y_location >= SCREEN_HEIGHT - ball_size or y_location < ball_size:
-        # y_speed = y_speed * -1
-
-
-    # x_location += x_speed
-    # y_location += y_speed
-
-    cat.draw()
-    #foe.draw()
-
-    # --- Go ahead and update the screen with what we've drawn.
-    pygame.display.flip()
-
-    # --- Limit to 60 frames per second
-    clock.tick(60)
+	# --- Limit to 60 frames per second
+	clock.tick(60)
 
 # Close the window and quit.
 pygame.quit()
