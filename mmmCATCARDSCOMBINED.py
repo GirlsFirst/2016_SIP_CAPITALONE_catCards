@@ -21,6 +21,9 @@ foe_list=["foe.png","foe2.png"]
 firey_list=["fiery1.png", "fiery2.png"]
 watery_list=["watery1.png", "watery2.png"]
 icy_list=["icy1.png","icy2.png"]
+foe_fire=["foefiery1.png","foefiery2.png"]
+foe_water=["foewatery1.png","foewatery2.png"]
+foe_ice=["foeicy1.png","foeicy2.png"]
 speed=2
 
 
@@ -83,6 +86,8 @@ class attack():
 		screen.blit(self.image,self.rect)
 	def move(self):                      #Moves animations across the screen
 		self.rect.x += 8
+	def move_left (self):
+		self.rect.x-=8
 		
 		
 
@@ -90,10 +95,13 @@ class attack():
 cat= character(wiz_list[0])
 foe= character(foe_list[0])
 count =1
-fire= attack(firey_list[0],0,60)
+fire= attack(firey_list[0],0,60)          #player attacks
 water=attack(watery_list[0],0,130)
 ice=attack(icy_list[0],0,75)
 
+f_fire=attack(foe_fire[0],600,60)         #foe attacks
+f_water=attack(foe_water[0],600,130)
+f_ice=attack(foe_ice[0],600,60)
 
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 800
@@ -203,97 +211,154 @@ can_restart = False
 print (all_elem_list[1])
 print (elem_track)
 
+noclick=True
+start= pygame.image.load("startscreen.png")
+background =pygame.image.load ("bg.png")
+howto=False
+start_game = False
 
-
+click_delay = 0
 while not done:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			done = True
 	screen.fill(WHITE)
-	
-		#Code responsible for animations
-	if count < 20:
-		cat.image = wiz_list[1]
-		foe.image= foe_list[1]
-		fire.image=firey_list[1]
-		water.image=watery_list[1]
-		ice.image=icy_list[1]
-		count +=1
-	elif count < 40:
-		cat.image = wiz_list[0]
-		foe.image= foe_list[0]
-		fire.image=firey_list[0]
-		water.image=watery_list[0]
-		ice.image=icy_list[0]
-		count += 1
-	if count == 39:
-		count = 1
+	if start_game == False and howto == False:                #Shows start screen
+		screen.blit(start, [0,0])
+		mouse_pressed=pygame.mouse.get_pressed()
+		if mouse_pressed== (1,0,0):
+			howto=True
+	elif howto==True and start_game == False:                       #shows instructions
+		screen.blit(background, [0,0])
+		mouse_pressed=pygame.mouse.get_pressed()
+		click_delay += 1
+		if mouse_pressed== (1,0,0) and click_delay > 30:
+			start_game=True
+	elif start_game == True:
+		screen.blit(background,[0,0])
+			#Code responsible for animations,
+		if count < 20:
+			cat.image = wiz_list[1]
+			foe.image= foe_list[1]
+			fire.image=firey_list[1]
+			water.image=watery_list[1]
+			ice.image=icy_list[1]
+			f_fire.image=foe_fire[1]
+			f_water.image=foe_water[1]
+			f_ice.image=foe_ice[1]
+			count +=1
+		elif count < 40:
+			cat.image = wiz_list[0]
+			foe.image= foe_list[0]
+			fire.image=firey_list[0]
+			water.image=watery_list[0]
+			ice.image=icy_list[0]
+			f_fire.image=foe_fire[0]
+			f_water.image=foe_water[0]
+			f_ice.image=foe_ice[0]
+			count += 1
+		if count == 39:
+			count = 1
+			
+			
+			
+		# --- Draws the line and sets up text for scores
+		score=100
+		pygame.draw.line(screen,BLACK,[0,SCREEN_HEIGHT/2],[900,SCREEN_HEIGHT/2],1)
+		font = pygame.font.SysFont("monospace", 20, True, False)
+		text_score = font.render ("Your score:", True, BLACK)
+		text_enemy_score = font.render ("Enemy score:", True, BLACK)
+		
+		
+		#Controls attacks and resets them for next round~~~~~~~~~~
+		fires=False
+		waters=False
+		icies=False
+		fire_foe=False
+		water_foe=False
+		ice_foe=False
+		card_ele="1"
+
+		if card_ele== "1": #player fire card wins
+			fires=True
+		elif card_ele=="2": #player water card wins
+			waters=True
+		elif card_ele=="3": #player ice card wins
+			icies=True
+		elif card_ele=="4": #Opponents fire card wins
+			fire_foe=True
+		elif card_ele=="5":  #Opponents water card wins
+			water_foe=True  
+		elif card_ele=="6":   #Opponents ice card wins
+			ice_foe=True    
+			
+		else:                #DRAW! or just waiting for move
+			fires=False
+			waters=False
+			icies=False
+		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	#Draws characters and attacks if one is made
+		if fires==True:
+			cat.draw(cat.image,-50,60)
+			foe.draw(foe.image,500,50)
+			fire.draw(fire.image)
+		elif waters==True:
+			cat.draw(cat.image,-50,60)
+			foe.draw(foe.image,500,50)
+			water.draw(water.image)
+		elif icies==True:
+			cat.draw(cat.image,-50,60)
+			foe.draw(foe.image,500,50)
+			ice.draw(ice.image)
+		elif fire_foe==True:
+			cat.draw(cat.image,-50,60)
+			foe.draw(foe.image,500,50)
+			f_fire.draw(f_fire.image)
+		elif water_foe==True:
+			cat.draw(cat.image,-50,60)
+			foe.draw(foe.image,500,50)
+			f_water.draw(f_water.image)
+		elif ice_foe==True:
+			cat.draw(cat.image,-50,60)
+			foe.draw(foe.image,500,50)
+			f_ice.draw(f_ice.image)
+		else:
+			cat.draw(cat.image,-50,60)
+			foe.draw(foe.image,500,50)
+
+		#Stops the animation in the background once it happens
+		if fire.rect.x <900:
+			fire.move()
+		if water.rect.x<900:
+			water.move()
+		if ice.rect.x<900:
+			ice.move()
+		if f_fire.rect.x >-100:
+			f_fire.move_left()
+		if f_water.rect.x>-100:
+			f_water.move_left()
+		if f_ice.rect.x>-100:
+			f_ice.move_left()
+
+		
+		black_card.draw(screen)
+		white_card.draw(screen)
+		all_elem.draw(screen)
+		
+		#pygame.draw.rect(screen, WHITE, all_card.rect)
+		
+		card_attatch()
 		
 		
 		
-		# --- Drawing code should go here
-
-	pygame.draw.line(screen,BLACK,[0,SCREEN_HEIGHT/2],[900,SCREEN_HEIGHT/2],1)
-	#Controls attacks~~~~~~~~~~
-	fires=False
-	waters=False
-	icies=False
-	card_ele="1"
-
-	if card_ele== "1": #Fire card wins
-		fires=True
-		waters=False
-		icies=False
-	elif card_ele=="2": #water card wins
-		fires=False
-		waters=True
-		icies=False
-	elif card_ele=="3": #ice card wins
-		fires=False
-		waters=False
-		icies=True
-	else:                #DRAW! or just waiting for move
-		fires=False
-		waters=False
-		icies=False
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-#Draws characters and attacks if one is made
-	if fires==True:
-		cat.draw(cat.image,-50,60)
-		foe.draw(foe.image,500,50)
-		fire.draw(fire.image)
-	elif waters==True:
-		cat.draw(cat.image,-50,60)
-		foe.draw(foe.image,500,50)
-		water.draw(water.image)
-	elif icies==True:
-		cat.draw(cat.image,-50,60)
-		foe.draw(foe.image,500,50)
-		ice.draw(ice.image)
-	else:
-		cat.draw(cat.image,-50,60)
-		foe.draw(foe.image,500,50)
-
-	fire.move()
-	water.move()
-	ice.move()
-
-	
-	black_card.draw(screen)
-	white_card.draw(screen)
-	all_elem.draw(screen)
-	#pygame.draw.rect(screen, WHITE, all_card.rect)
-	
-	card_attatch()
-	
-	
-	
-	for i in range(7):
-		screen.blit(texts[i-1], text_loc[i-1])
-	
-	
-	
+		for i in range(7):
+			screen.blit(texts[i-1], text_loc[i-1])
+			
+		screen.blit(text_score, [10,5])
+		screen.blit(text_enemy_score, [600,5])
+		
+	#elif score>10
 	pygame.display.flip()
  
 	# Limit to 60 frames per second
